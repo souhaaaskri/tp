@@ -1,0 +1,71 @@
+
+
+select avg(nvl(comm,0))
+from emp;
+
+select ename
+from emp
+where to_char(hiredate,'DD/MM/YYYY')=to_char(sysdate,'DD/MM/YYYY');
+
+select distinct job
+from emp,dept
+where emp.deptno=dept.deptno and loc='CHICAGO';
+
+select ename,sal,hiredate
+from emp,dept
+where emp.deptno=dept.deptno and loc='CHICAGO' and emp.deptno in (select deptno 
+                                                              from emp 
+                                                              group by deptno
+                                                              having count(*)>3);
+
+select distinct job
+from emp
+where sal in (select min(avg(sal)) from emp group by job);
+
+select ename 
+from emp
+where comm=(select min(comm) from emp where comm>0 and comm is not null);
+
+select empno, ename
+from emp
+where hiredate in (select max(hiredate) from emp);
+
+select ename
+from emp 
+where to_char(hiredate,'MM/YY')= (select to_char(hiredate,'MM/YY') from emp where empno=7844)
+and empno <> 7844;
+
+create table empwork as select * from emp ;
+
+select * from empwork;
+
+create table deptwork as select * from dept ;
+
+update emp 
+set sal = 10000 where ename='SMITH';
+
+delete from deptwork
+where deptno=40;
+
+select * from dept;
+
+create synonym departements for deptwork ;
+
+alter table empwork 
+modify (empno number(6));
+
+select ename "Hierarchie"
+from emp
+connect by prior empno=mgr
+start with upper(ename)='KING';
+
+select ename "Hierarchie"
+from emp
+connect by empno=prior mgr
+start with upper(ename)='FORD';
+
+select ename "Hierarchie"
+from emp
+where level=2
+connect by empno=prior mgr
+start with upper(ename)='FORD';
